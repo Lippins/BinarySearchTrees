@@ -12,6 +12,14 @@ class Node
   end
 
   def <=>(other)
-    @data <=> other.data
+    other = other.instance_of?(Node) ? other.data : other
+    @data <=> other
+  end
+
+  def child?
+    @left || @right ? true : false
   end
 end
+
+# test = Node.new(8)
+# puts(test > 7)
