@@ -21,7 +21,7 @@ class Tree
   end
 
   def insert(value, current_node = @root)
-    # inserts value as a new node in the tree
+    # Inserts value as a new node in the tree
     return Node.new(value) unless current_node
 
     if current_node > value
@@ -30,6 +30,43 @@ class Tree
       current_node.right = insert(value, current_node.right)
     end
 
+    current_node
+  end
+
+  def delete(value, current_node = @root)
+    # Deletes specified value from the tree.
+    return nil unless current_node
+
+    if current_node > value
+      current_node.left = delete(value, current_node.left)
+    elsif current_node < value
+      current_node.right = delete(value, current_node.right)
+    else
+      current_node = handle_deletion(current_node)
+    end
+    current_node
+  end
+
+  def handle_deletion(node)
+    # The deletion value is a leaf node or has only one subtree
+    return node.right unless node.left
+    return node.left unless node.right
+
+    # The deletion value is a leaf node or has only one subtree
+    replace_and_delete_min(node)
+  end
+
+  def replace_and_delete_min(node)
+    # Swaps a nodes value with its minimum successor
+    min_successor = min_value(node.right)
+    node.data = min_successor.data
+    node.right = delete(min_successor, node.right)
+    node
+  end
+
+  def min_value(current_node = @root)
+    # Returns the node with the smallest value in a tree.
+    current_node = current_node.left while current_node.left
     current_node
   end
 
@@ -46,5 +83,6 @@ test.pretty_print
 test.insert(10)
 test.insert(16)
 test.insert(1.2)
-test.insert(23)
+test.pretty_print
+test.delete(8)
 test.pretty_print
