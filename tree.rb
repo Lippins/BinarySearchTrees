@@ -59,6 +59,25 @@ class Tree
     end
   end
 
+  def level_order(current_node = @root)
+    # Iterative aproach for breadthfirst traversal
+    return [] unless current_node
+
+    queue = [current_node]
+    result = []
+
+    until queue.empty?
+      current_node = queue.shift
+      result << current_node.data
+      yield current_node if block_given?
+      # Enqueue left and right children if they exist
+      queue << current_node.left if current_node.left
+      queue << current_node.right if current_node.right
+    end
+
+    result unless block_given?
+  end
+
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
@@ -96,6 +115,7 @@ test.insert(10)
 test.insert(16)
 test.insert(1.2)
 test.pretty_print
-puts test.find(8)
-puts test.find(0)
-puts test.find(16)
+# puts test.find(8)
+# puts test.find(0)
+# puts test.find(16)
+p test.level_order
