@@ -2,6 +2,8 @@
 
 require './node'
 # Handles the attributes of the Balanced Binary Search Tree (BST)
+
+# rubocop: disable Metrics/ClassLength
 class Tree
   def initialize(elements)
     @root = build_tree(elements)
@@ -59,8 +61,8 @@ class Tree
     end
   end
 
+  # Iterative aproach for breadth-first traversal
   def level_order(current_node = @root)
-    # Iterative aproach for breadthfirst traversal
     return [] unless current_node
 
     queue = [current_node]
@@ -76,6 +78,66 @@ class Tree
     end
 
     result unless block_given?
+  end
+
+  # Performs a preorder traversal of a binary search tree.
+  # Yields each node's data to a provided block, if given.
+  # Returns an array of all node data if no block is given.
+  def preorder(current_node = @root, result = nil, &blk)
+    return result || [] unless current_node
+
+    result ||= []
+
+    if block_given?
+      yield current_node
+    else
+      result << current_node.data
+    end
+    preorder(current_node.left, result, &blk)
+    preorder(current_node.right, result, &blk)
+    result unless block_given?
+  end
+
+  # Performs a preorder traversal of a binary search tree.
+  def inorder(current_node = @root, result = nil, &blk)
+    return result || [] unless current_node
+
+    result ||= []
+    inorder(current_node.left, result, &blk)
+    if block_given?
+      yield current_node
+    else
+      result << current_node.data
+    end
+    inorder(current_node.right, result, &blk)
+    result unless block_given?
+  end
+
+  # Performs a postorder traversal of a binary search tree.
+  def postorder(current_node = @root, result = nil, &blk)
+    return result || [] unless current_node
+
+    result ||= []
+    postorder(current_node.left, result, &blk)
+    postorder(current_node.right, result, &blk)
+    if block_given?
+      yield current_node
+    else
+      result << current_node.data
+    end
+
+    result unless block_given?
+  end
+
+  def height(current_node = @root)
+    return -1 unless current_node # Base case: if there's no node, return -1 (no edges).
+
+    # Recursively calculate the height of each subtree.
+    left_height = height(current_node.left)
+    right_height = height(current_node.right)
+
+    # The height of the tree is the max height of the subtrees plus one edge to reach the subtree.
+    [left_height, right_height].max + 1
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
@@ -107,6 +169,7 @@ class Tree
     current_node
   end
 end
+# rubocop:enable Metrics/ClassLength
 
 test = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
 puts test
@@ -118,4 +181,4 @@ test.pretty_print
 # puts test.find(8)
 # puts test.find(0)
 # puts test.find(16)
-p test.level_order
+p test.height
