@@ -140,6 +140,17 @@ class Tree
     [left_height, right_height].max + 1
   end
 
+  def depth(node, current_node = @root, current_depth = 0)
+    return -1 unless current_node # Base case: node not found
+    return current_depth if current_node == node
+
+    if current_node > node
+      depth(node, current_node.left, current_depth + 1)
+    elsif current_node < node
+      depth(node, current_node.right, current_depth + 1)
+    end
+  end
+
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
@@ -181,9 +192,4 @@ test.pretty_print
 # puts test.find(8)
 # puts test.find(0)
 # puts test.find(16)
-<<<<<<< HEAD
-p test.height
-=======
-p test.level_order
-p(test.postorder { |node| puts "This node has data of #{node.data}" })
->>>>>>> 7454959666359569b719b28b027d933193327520
+p test.depth(5)
