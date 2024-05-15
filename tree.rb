@@ -181,4 +181,9 @@ test.pretty_print
 # puts test.find(8)
 # puts test.find(0)
 # puts test.find(16)
+<<<<<<< HEAD
 p test.height
+=======
+p test.level_order
+p(test.postorder { |node| puts "This node has data of #{node.data}" })
+>>>>>>> 7454959666359569b719b28b027d933193327520
