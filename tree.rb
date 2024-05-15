@@ -2,6 +2,8 @@
 
 require './node'
 # Handles the attributes of the Balanced Binary Search Tree (BST)
+
+# rubocop: disable Metrics/ClassLength
 class Tree
   def initialize(elements)
     @root = build_tree(elements)
@@ -59,8 +61,8 @@ class Tree
     end
   end
 
+  # Iterative aproach for breadth-first traversal
   def level_order(current_node = @root)
-    # Iterative aproach for breadthfirst traversal
     return [] unless current_node
 
     queue = [current_node]
@@ -73,6 +75,55 @@ class Tree
       # Enqueue left and right children if they exist
       queue << current_node.left if current_node.left
       queue << current_node.right if current_node.right
+    end
+
+    result unless block_given?
+  end
+
+  # Performs a preorder traversal of a binary search tree.
+  # Yields each node's data to a provided block, if given.
+  # Returns an array of all node data if no block is given.
+  def preorder(current_node = @root, result = nil, &blk)
+    return result || [] unless current_node
+
+    result ||= []
+
+    if block_given?
+      yield current_node
+    else
+      result << current_node.data
+    end
+    preorder(current_node.left, result, &blk)
+    preorder(current_node.right, result, &blk)
+    result unless block_given?
+  end
+
+  # Performs a preorder traversal of a binary search tree.
+  def inorder(current_node = @root, result = nil, &blk)
+    return result || [] unless current_node
+
+    result ||= []
+    inorder(current_node.left, result, &blk)
+    if block_given?
+      yield current_node
+    else
+      result << current_node.data
+    end
+    inorder(current_node.right, result, &blk)
+    result unless block_given?
+  end
+
+  # Performs a postorder traversal of a binary search tree.
+  def postorder(current_node = @root, result = nil, &blk)
+    return result || [] unless current_node
+
+    result ||= []
+    postorder(current_node.left, result, &blk)
+    postorder(current_node.right, result, &blk)
+    if block_given?
+      yield current_node
+    else
+      result << current_node.data
     end
 
     result unless block_given?
@@ -107,6 +158,7 @@ class Tree
     current_node
   end
 end
+# rubocop:enable Metrics/ClassLength
 
 test = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
 puts test
@@ -119,3 +171,4 @@ test.pretty_print
 # puts test.find(0)
 # puts test.find(16)
 p test.level_order
+p(test.postorder { |node| puts "This node has data of #{node.data}" })
