@@ -22,6 +22,12 @@ class Tree
     root_node
   end
 
+  def pretty_print(node = @root, prefix = '', is_left = true)
+    pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
+    puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
+    pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
+  end
+
   def insert(value, current_node = @root)
     # Inserts value as a new node in the tree
     return Node.new(value) unless current_node
@@ -78,16 +84,6 @@ class Tree
     end
 
     result unless block_given?
-  end
-
-  def balanced?(current_node = @root)
-    return true unless current_node # An nil node is inherently balanced
-
-    height_left = height(current_node.left)
-    height_right = height(current_node.right)
-
-    # Check height difference and ensure subtrees are balanced
-    (height_left - height_right).abs <= 1 && balanced?(current_node.left) && balanced?(current_node.right)
   end
 
   # Performs a preorder traversal of a binary search tree.
@@ -161,11 +157,24 @@ class Tree
     end
   end
 
-  def pretty_print(node = @root, prefix = '', is_left = true)
-    pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
-    puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
-    pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
+  def balanced?(current_node = @root)
+    return true unless current_node # An nil node is inherently balanced
+
+    height_left = height(current_node.left)
+    height_right = height(current_node.right)
+
+    # Check height difference and ensure subtrees are balanced
+    (height_left - height_right).abs <= 1 && balanced?(current_node.left) && balanced?(current_node.right)
   end
+
+  def rebalance
+    return unless @root
+
+    elements = inorder
+    @root = build_tree(elements)
+  end
+
+  private
 
   def handle_deletion(node)
     # The deletion value is a leaf node or has only one subtree
@@ -191,15 +200,3 @@ class Tree
   end
 end
 # rubocop:enable Metrics/ClassLength
-
-test = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
-puts test
-test.pretty_print
-test.insert(10)
-test.insert(16)
-test.insert(1.2)
-test.pretty_print
-# puts test.find(8)
-# puts test.find(0)
-# puts test.find(16)
-p test.balanced?
