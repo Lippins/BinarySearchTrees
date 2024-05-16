@@ -80,6 +80,16 @@ class Tree
     result unless block_given?
   end
 
+  def balanced?(current_node = @root)
+    return true unless current_node # An nil node is inherently balanced
+
+    height_left = height(current_node.left)
+    height_right = height(current_node.right)
+
+    # Check height difference and ensure subtrees are balanced
+    (height_left - height_right).abs <= 1 && balanced?(current_node.left) && balanced?(current_node.right)
+  end
+
   # Performs a preorder traversal of a binary search tree.
   # Yields each node's data to a provided block, if given.
   # Returns an array of all node data if no block is given.
@@ -192,4 +202,4 @@ test.pretty_print
 # puts test.find(8)
 # puts test.find(0)
 # puts test.find(16)
-p test.depth(5)
+p test.balanced?
